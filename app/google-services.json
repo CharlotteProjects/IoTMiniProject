@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "509855589413",
+    "firebase_url": "https://espdata-bf0c0-default-rtdb.firebaseio.com",
+    "project_id": "espdata-bf0c0",
+    "storage_bucket": "espdata-bf0c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509855589413:android:f18fe337967964bdd18bcc",
+        "android_client_info": {
+          "package_name": "com.charlottesutdio.iotminiproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509855589413-3ni1l9rdqc9f0ri9d0ofaoppr2g5dvvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByoop4877Hs83kutnRuLYV--XQDq7G1Gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509855589413-3ni1l9rdqc9f0ri9d0ofaoppr2g5dvvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
