@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference database_LightMode;
 
     private final String path_Main_Manager = "Manager";
-    private final String path_LED = "LEDmode";
+    private final String path_LED = "LightMode";
     private boolean afterInti = false;
 
     //endregion
