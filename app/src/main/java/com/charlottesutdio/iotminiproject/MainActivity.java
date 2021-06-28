@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     nowLEDmode = Integer.parseInt(task.getResult().getValue().toString());
                     afterInti = true;
-                    Log.d(TAG, "msg:Get Data successful : " + nowLEDmode);
+                    Log.d(TAG, "msg: Get Data successful : " + nowLEDmode);
                 }
                 else {
-                    Log.e(TAG, "msg:Error getting data", task.getException());
+                    Log.e(TAG, "msg: Error getting data", task.getException());
                 }
             }
         });
@@ -82,17 +82,18 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         default:
                             mode = "";
-                            Log.e(TAG,"msg:Light Mode Setting get wrong number.");
+                            Log.e(TAG,"msg: Light Mode Setting get wrong number.");
                             break;
                     }
                     String st = "Change the Light Mode to : " + mode;
                     Toast.makeText(MainActivity.this, st, Toast.LENGTH_LONG).show();
+                    Log.d(TAG,"msg: " + st);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG,"msg:Light Mode Setting get wrong data.");
+                Log.e(TAG,"msg: Light Mode Setting get wrong data.");
             }
         });
     }
@@ -113,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
         spinner_LightMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(afterInti)
+                if(afterInti){
                     database_LightMode.child(path_LED).setValue(position);
+                    Log.d(TAG,"msg: You selected the position is : " + position);
+                }
             }
 
             @Override
