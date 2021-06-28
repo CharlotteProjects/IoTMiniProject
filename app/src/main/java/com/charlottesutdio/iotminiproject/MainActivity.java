@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,20 +24,30 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
 
+    //region FireBase Setting
+
     private DatabaseReference database_LightMode;
 
     private final String path_Main_Manager = "Manager";
     private final String path_LED = "LEDmode";
+    private boolean afterInti = false;
+
+    //endregion
+
+    //region UI Setting
 
     private Spinner spinner_LightMode;
     private int nowLEDmode = 0;
 
-    private boolean afterInti = false;
+    private TextView text_LightMode;
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        text_LightMode = (TextView) findViewById(R.id.text_YourLightMode);
 
         init_Firebase();
 
@@ -48,12 +59,13 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database_LightMode = database.getReference(path_Main_Manager);
 
-        // When onCreate will get the data first and set the choosed
+        // When onCreate will get the data first and set the choose
         database_LightMode.child(path_LED).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     nowLEDmode = Integer.parseInt(task.getResult().getValue().toString());
+                    setLightModeText(nowLEDmode);
                     afterInti = true;
                     Log.d(TAG, "msg: Get Data successful : " + nowLEDmode);
                 }
@@ -87,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     String st = "Change the Light Mode to : " + mode;
                     Toast.makeText(MainActivity.this, st, Toast.LENGTH_LONG).show();
+                    setLightModeText(value);
                     Log.d(TAG,"msg: " + st);
                 }
             }
@@ -127,5 +140,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Set spinner position by Firebase data
         spinner_LightMode.setSelection(nowLEDmode);
+    }
+
+    // set the Light Mode Text
+    void setLightModeText(int number) {
+        switch (number) {
+            case 0:
+                text_LightMode.setText("Auto Mode");
+                break;
+            case 1:
+                text_LightMode.setText("Lighting Mode");
+                break;
+            case 2:
+                text_LightMode.setText("Closing Mode");
+                break;
+            default:
+                Log.d(TAG, "mas: wrong number input to Light Mode Text.");
+                break;
+        }
     }
 }

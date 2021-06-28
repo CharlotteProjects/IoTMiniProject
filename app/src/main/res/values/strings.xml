@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">IoTMiniProject</string>
-    <string name="text_LightMode">Set the light mode :</string>
+    <string name="text_ChooseMode">Set the light mode :</string>
+    <string name="text_LightMode">Light Mode :</string>
+    <string name="text_YourLightMode">Auto Mode</string>
     <string-array name="drop_down_Light">
         <item>"Auto Mode"</item>
         <item>"Lighting Mode"</item>
