@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final String path_Main_Manager = "Manager";
     private final String path_LED = "LightMode";
+    private final String path_Fan = "FanMode";
+    private final String path_Temp = "NowTemp";
+
     private boolean afterInti = false;
 
     //endregion
@@ -37,9 +40,13 @@ public class MainActivity extends AppCompatActivity {
     //region UI Setting
 
     private Spinner spinner_LightMode;
+    private Spinner spinner_FanMode;
     private int nowLEDmode = 0;
+    private int nowFanmode = 0;
 
     private TextView text_LightMode;
+    private TextView text_FanMode;
+    private TextView text_NowTemp;
 
     //endregion
 
@@ -47,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         text_LightMode = (TextView) findViewById(R.id.text_YourLightMode);
+        text_FanMode = (TextView) findViewById(R.id.text_YourFanMode);
+        text_NowTemp = (TextView) findViewById(R.id.text_DHTTemp);
 
         init_Firebase();
 
@@ -59,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database_LightMode = database.getReference(path_Main_Manager);
 
-        // When onCreate will get the data first and set the choose
+        // Get Light Mode First
         database_LightMode.child(path_LED).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -75,7 +85,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Set the Listener for check when the value change successful.
+        // Get Fan Mode First
+        database_LightMode.child(path_Fan).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    nowFanmode = Integer.parseInt(task.getResult().getValue().toString());
+                    setFanModeText(nowFanmode);
+                    afterInti = true;
+                    Log.d(TAG, "msg: Get Data successful : " + nowFanmode);
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting data", task.getException());
+                }
+            }
+        });
+
+        // Set Now Temp First
+        database_LightMode.child(path_Temp).setValue(500);
+
+        // Set the Listener for checking Light Mode
         database_LightMode.child(path_LED).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -109,10 +138,70 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG,"msg: Light Mode Setting get wrong data.");
             }
         });
+
+        // Set the Listener for checking Fan Mode
+        database_LightMode.child(path_Fan).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(afterInti){
+                    Integer value = dataSnapshot.getValue(Integer.class);
+                    String mode;
+                    switch(value){
+                        case 0:
+                            mode = "Auto Mode";
+                            break;
+                        case 1:
+                            mode = "Opening Mode";
+                            break;
+                        case 2:
+                            mode = "Closing Mode";
+                            break;
+                        default:
+                            mode = "";
+                            Log.e(TAG,"msg: Fan Mode Setting get wrong number.");
+                            break;
+                    }
+                    String st = "Change the Fan Mode to : " + mode;
+                    Toast.makeText(MainActivity.this, st, Toast.LENGTH_LONG).show();
+                    setFanModeText(value);
+                    Log.d(TAG,"msg: " + st);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Light Mode Setting get wrong data.");
+            }
+        });
+
+        // Set the Listener for checking Now Temp
+        database_LightMode.child(path_Temp).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(afterInti){
+                    Float value = dataSnapshot.getValue(Float.class);
+                    if(value == 500)
+                        text_NowTemp.setText("- ");
+                    else{
+                        String st = value + " °C";
+                        text_NowTemp.setText(st);
+                    }
+                    Log.d(TAG,"msg: Get the temp is : " + value);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Get wrong temp data.");
+            }
+        });
     }
 
     // init the Light Mode Spinner
     void init_SpinnerLightMode(){
+
+        //region init Spinner Light Mode
+
         spinner_LightMode = (Spinner) findViewById(R.id.spinner_Light);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -140,6 +229,41 @@ public class MainActivity extends AppCompatActivity {
 
         // Set spinner position by Firebase data
         spinner_LightMode.setSelection(nowLEDmode);
+
+        //endregion
+
+        //region init Spinner Fan Mode
+
+        spinner_FanMode = (Spinner) findViewById(R.id.spinner_Fan);
+        ArrayAdapter<CharSequence> adapterFan = ArrayAdapter.createFromResource(
+                this,
+                R.array.drop_down_Fan,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner_FanMode.setAdapter(adapterFan);
+
+        // init the spinner Listener, will send the choose to firebase.
+        spinner_FanMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(afterInti){
+                    database_LightMode.child(path_Fan).setValue(position);
+                    Log.d(TAG,"msg: You selected the position is : " + position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        // Set spinner position by Firebase data
+        spinner_FanMode.setSelection(nowFanmode);
+
+        //endregion
+
     }
 
     // set the Light Mode Text
@@ -159,4 +283,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    // set the Light Mode Text
+    void setFanModeText(int number) {
+        switch (number) {
+            case 0:
+                text_FanMode.setText("Auto Mode");
+                break;
+            case 1:
+                text_FanMode.setText("OpeningMode");
+                break;
+            case 2:
+                text_FanMode.setText("Closing Mode");
+                break;
+            default:
+                Log.d(TAG, "mas: wrong number input to Fan Mode Text.");
+                break;
+        }
+    }
+
 }

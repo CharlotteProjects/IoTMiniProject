@@ -3,13 +3,21 @@
     <string name="text_ChooseMode">Set the Light Mode :</string>
     <string name="text_LightMode">Light Mode :</string>
     <string name="text_YourLightMode">Auto Mode</string>
-    <string name="text_DHTMode">Temperature Mode :</string>
-    <string name="text_YourDHTMode">Auto Mode</string>
+    <string name="text_FanMode">Temperature Mode :</string>
+    <string name="text_YourFanMode">Auto Mode</string>
     <string name="text_DHT">Home Temperature :</string>
     <string name="text_DHTTemp">- °C</string>
+    <string name="text_ChooseModeFan">Set the Fan Mode :</string>
+
     <string-array name="drop_down_Light">
         <item>"Auto Mode"</item>
         <item>"Lighting Mode"</item>
+        <item>"Closing Mode"</item>
+    </string-array>>
+
+    <string-array name="drop_down_Fan">
+        <item>"Auto Mode"</item>
+        <item>"Opening Mode"</item>
         <item>"Closing Mode"</item>
     </string-array>>
 </resources>
