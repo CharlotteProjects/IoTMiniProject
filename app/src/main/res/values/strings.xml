@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">IoTMiniProject</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
     <string name="text_ChooseMode">Set the Light Mode :</string>
     <string name="text_LightMode">Light Mode :</string>
     <string name="text_YourLightMode">Auto Mode</string>
@@ -8,6 +10,8 @@
     <string name="text_DHT">Home Temperature :</string>
     <string name="text_DHTTemp">- °C</string>
     <string name="text_ChooseModeFan">Set the Fan Mode :</string>
+    <string name="text_LightState_text">Light is :</string>
+    <string name="text_FanState_text">Fan is :</string>
 
     <string-array name="drop_down_Light">
         <item>"Auto Mode"</item>

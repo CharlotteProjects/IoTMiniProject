@@ -7,26 +7,95 @@
     android:padding="12sp"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/linearLayout_LightState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/image_LightState"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/text_LightState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10sp"
+            android:text="@string/text_LightState_text"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_LightStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10sp"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_FanState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_LightState">
+
+        <ImageView
+            android:id="@+id/image_FanState"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/text_FanState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10sp"
+            android:text="@string/text_FanState_text"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_FanStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10sp"
+            android:textSize="20sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/text_LightMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_LightMode"
         android:textSize="20sp"
+        android:layout_marginTop="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_FanState" />
 
     <TextView
         android:id="@+id/text_YourLightMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10sp"
-        android:textSize="20sp"
         android:text="@string/text_YourLightMode"
+        android:textSize="20sp"
+        android:layout_marginTop="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/text_LightMode"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_FanState" />
 
     <TextView
         android:id="@+id/text_FanMode"
@@ -42,15 +111,14 @@
         android:id="@+id/text_YourFanMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
         android:layout_marginStart="10sp"
+        android:layout_marginTop="20sp"
         android:text="@string/text_YourFanMode"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/text_FanMode"
         app:layout_constraintTop_toBottomOf="@+id/text_LightMode" />
-
 
     <TextView
         android:id="@+id/text_DHT"
@@ -66,8 +134,8 @@
         android:id="@+id/text_DHTTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
         android:layout_marginStart="10sp"
+        android:layout_marginTop="20sp"
         android:text="@string/text_DHTTemp"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,8 +147,8 @@
         android:id="@+id/text_ChooesLightMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_ChooseMode"
         android:layout_marginTop="50sp"
+        android:text="@string/text_ChooseMode"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -105,8 +173,8 @@
         android:id="@+id/text_ChooesFanMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_ChooseModeFan"
         android:layout_marginTop="20sp"
+        android:text="@string/text_ChooseModeFan"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

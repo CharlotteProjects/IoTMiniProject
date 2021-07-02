@@ -3,11 +3,13 @@ package com.charlottesutdio.iotminiproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference database_LightMode;
 
     private final String path_Main_Manager = "Manager";
+    private final String path_LEDOn = "LightOn";
+    private final String path_FanOn = "FanOn";
     private final String path_LED = "LightMode";
     private final String path_Fan = "FanMode";
     private final String path_Temp = "NowTemp";
@@ -44,9 +48,14 @@ public class MainActivity extends AppCompatActivity {
     private int nowLEDmode = 0;
     private int nowFanmode = 0;
 
+    private TextView text_LEDOn;
+    private TextView text_FanOn;
     private TextView text_LightMode;
     private TextView text_FanMode;
     private TextView text_NowTemp;
+
+    private ImageView image_LEDOn;
+    private ImageView image_FanOn;
 
     //endregion
 
@@ -55,9 +64,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        text_LEDOn = (TextView) findViewById(R.id.text_LightStateText);
+        text_FanOn = (TextView) findViewById(R.id.text_FanStateText);
         text_LightMode = (TextView) findViewById(R.id.text_YourLightMode);
         text_FanMode = (TextView) findViewById(R.id.text_YourFanMode);
         text_NowTemp = (TextView) findViewById(R.id.text_DHTTemp);
+
+        image_LEDOn = (ImageView) findViewById(R.id.image_LightState);
+        image_FanOn = (ImageView) findViewById(R.id.image_FanState);
 
         init_Firebase();
 
@@ -68,6 +82,48 @@ public class MainActivity extends AppCompatActivity {
     void init_Firebase(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database_LightMode = database.getReference(path_Main_Manager);
+
+        // Get Light On First
+        database_LightMode.child(path_LEDOn).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(Boolean.parseBoolean(task.getResult().getValue().toString())){
+                        text_LEDOn.setText(R.string.on);
+                        text_LEDOn.setTextColor(Color.GREEN);
+                        image_LEDOn.setImageResource(R.drawable.light_on);
+                    } else{
+                        text_LEDOn.setText(R.string.off);
+                        text_LEDOn.setTextColor(Color.RED);
+                        image_LEDOn.setImageResource(R.drawable.light_off);
+                    }
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting LED on data", task.getException());
+                }
+            }
+        });
+
+        // Get Fan OFF First
+        database_LightMode.child(path_FanOn).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(Boolean.parseBoolean(task.getResult().getValue().toString())){
+                        text_FanOn.setText(R.string.on);
+                        text_FanOn.setTextColor(Color.GREEN);
+                        image_FanOn.setImageResource(R.drawable.fan_on);
+                    } else{
+                        text_FanOn.setText(R.string.off);
+                        text_FanOn.setTextColor(Color.RED);
+                        image_FanOn.setImageResource(R.drawable.fan_off);
+                    }
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting Fan on data", task.getException());
+                }
+            }
+        });
 
         // Get Light Mode First
         database_LightMode.child(path_LED).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -101,8 +157,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Set Now Temp First
-        database_LightMode.child(path_Temp).setValue(500);
+        // Set the Listener for checking Light ON / OFF
+        database_LightMode.child(path_LEDOn).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    text_LEDOn.setText(R.string.on);
+                    text_LEDOn.setTextColor(Color.GREEN);
+                    image_LEDOn.setImageResource(R.drawable.light_on);
+                } else{
+                    text_LEDOn.setText(R.string.off);
+                    text_LEDOn.setTextColor(Color.RED);
+                    image_LEDOn.setImageResource(R.drawable.light_off);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Light On Setting get wrong data.");
+            }
+        });
+
+        // Set the Listener for checking Fan ON / OFF
+        database_LightMode.child(path_FanOn).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    text_FanOn.setText(R.string.on);
+                    text_FanOn.setTextColor(Color.GREEN);
+                    image_FanOn.setImageResource(R.drawable.fan_on);
+                } else{
+                    text_FanOn.setText(R.string.off);
+                    text_FanOn.setTextColor(Color.RED);
+                    image_FanOn.setImageResource(R.drawable.fan_off);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Fan On Setting get wrong data.");
+            }
+        });
 
         // Set the Listener for checking Light Mode
         database_LightMode.child(path_LED).addValueEventListener(new ValueEventListener() {
@@ -180,13 +274,11 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(afterInti){
                     Float value = dataSnapshot.getValue(Float.class);
-                    if(value == 500)
-                        text_NowTemp.setText("- ");
-                    else{
-                        String st = value + " °C";
-                        text_NowTemp.setText(st);
-                    }
+                    String st = value + " °C";
+                    text_NowTemp.setText(st);
                     Log.d(TAG,"msg: Get the temp is : " + value);
+                } else{
+                    text_NowTemp.setText("- °C");
                 }
             }
 
