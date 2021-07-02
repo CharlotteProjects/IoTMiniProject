@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private final String path_LED = "LightMode";
     private final String path_Fan = "FanMode";
     private final String path_Temp = "NowTemp";
+    private final String path_Humi = "NowHumi";
 
     private boolean afterInti = false;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView text_LightMode;
     private TextView text_FanMode;
     private TextView text_NowTemp;
+    private TextView text_NowHumi;
 
     private ImageView image_LEDOn;
     private ImageView image_FanOn;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         text_LightMode = (TextView) findViewById(R.id.text_YourLightMode);
         text_FanMode = (TextView) findViewById(R.id.text_YourFanMode);
         text_NowTemp = (TextView) findViewById(R.id.text_DHTTemp);
+        text_NowHumi = (TextView) findViewById(R.id.text_DHTHumi);
 
         image_LEDOn = (ImageView) findViewById(R.id.image_LightState);
         image_FanOn = (ImageView) findViewById(R.id.image_FanState);
@@ -287,6 +290,25 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG,"msg: Get wrong temp data.");
             }
         });
+
+        database_LightMode.child(path_Humi).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(afterInti){
+                    Float value = dataSnapshot.getValue(Float.class);
+                    String st = value + " %";
+                    text_NowHumi.setText(st);
+                    Log.d(TAG,"msg: Get the temp is : " + value);
+                } else{
+                    text_NowTemp.setText("- °C");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Get wrong humi data.");
+            }
+        });
     }
 
     // init the Light Mode Spinner
@@ -363,12 +385,15 @@ public class MainActivity extends AppCompatActivity {
         switch (number) {
             case 0:
                 text_LightMode.setText("Auto Mode");
+                text_LightMode.setTextColor(Color.BLUE);
                 break;
             case 1:
                 text_LightMode.setText("Lighting Mode");
+                text_LightMode.setTextColor(Color.GREEN);
                 break;
             case 2:
                 text_LightMode.setText("Closing Mode");
+                text_LightMode.setTextColor(Color.RED);
                 break;
             default:
                 Log.d(TAG, "mas: wrong number input to Light Mode Text.");
@@ -381,12 +406,15 @@ public class MainActivity extends AppCompatActivity {
         switch (number) {
             case 0:
                 text_FanMode.setText("Auto Mode");
+                text_FanMode.setTextColor(Color.BLUE);
                 break;
             case 1:
                 text_FanMode.setText("OpeningMode");
+                text_FanMode.setTextColor(Color.GREEN);
                 break;
             case 2:
                 text_FanMode.setText("Closing Mode");
+                text_FanMode.setTextColor(Color.RED);
                 break;
             default:
                 Log.d(TAG, "mas: wrong number input to Fan Mode Text.");

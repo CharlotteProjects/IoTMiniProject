@@ -121,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_LightMode" />
 
     <TextView
-        android:id="@+id/text_DHT"
+        android:id="@+id/text_DHT_T"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
@@ -140,8 +140,31 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/text_DHT"
+        app:layout_constraintStart_toEndOf="@+id/text_DHT_T"
         app:layout_constraintTop_toBottomOf="@+id/text_FanMode" />
+
+    <TextView
+        android:id="@+id/text_DHT_H"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:text="@string/text_DHT_H"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_DHT_T" />
+
+    <TextView
+        android:id="@+id/text_DHTHumi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:layout_marginTop="20sp"
+        android:text="@string/text_DHTHumi"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/text_DHT_H"
+        app:layout_constraintTop_toBottomOf="@+id/text_DHT_T" />
 
     <TextView
         android:id="@+id/text_ChooesLightMode"
@@ -154,7 +177,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_DHT"
+        app:layout_constraintTop_toBottomOf="@+id/text_DHT_H"
         app:layout_constraintVertical_bias="0.0" />
 
     <Spinner

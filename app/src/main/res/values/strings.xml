@@ -8,7 +8,9 @@
     <string name="text_FanMode">Temperature Mode :</string>
     <string name="text_YourFanMode">Auto Mode</string>
     <string name="text_DHT">Home Temperature :</string>
+    <string name="text_DHT_H">Home Humidity :</string>
     <string name="text_DHTTemp">- °C</string>
+    <string name="text_DHTHumi">- %</string>
     <string name="text_ChooseModeFan">Set the Fan Mode :</string>
     <string name="text_LightState_text">Light is :</string>
     <string name="text_FanState_text">Fan is :</string>
