@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private final String path_Fan = "FanMode";
     private final String path_Temp = "NowTemp";
     private final String path_Humi = "NowHumi";
+    private final String path_LEDSet = "LightActiviteValue";
+    private final String path_FanSet = "FanActiviteValue";
 
     private boolean afterInti = false;
 
@@ -59,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
     private ImageView image_LEDOn;
     private ImageView image_FanOn;
 
+    private EditText edit_LED;
+    private EditText edit_Fan;
+
+    private Button button_LED;
+    private Button button_Fan;
+
+    int LEDValue = 2000;
+    float FanValue = 20.0f;
+
     //endregion
 
     @Override
@@ -76,9 +89,17 @@ public class MainActivity extends AppCompatActivity {
         image_LEDOn = (ImageView) findViewById(R.id.image_LightState);
         image_FanOn = (ImageView) findViewById(R.id.image_FanState);
 
+        edit_LED = (EditText) findViewById(R.id.edit_Light);
+        edit_Fan = (EditText) findViewById(R.id.edit_Fan);
+
+        button_LED = (Button) findViewById(R.id.button_Light);
+        button_Fan = (Button) findViewById(R.id.button_Fan);
+
         init_Firebase();
 
         init_SpinnerLightMode();
+
+        init_Button();
     }
 
     // init the Firebase get set data
@@ -153,6 +174,34 @@ public class MainActivity extends AppCompatActivity {
                     setFanModeText(nowFanmode);
                     afterInti = true;
                     Log.d(TAG, "msg: Get Data successful : " + nowFanmode);
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting data", task.getException());
+                }
+            }
+        });
+
+        // Get Light Value First
+        database_LightMode.child(path_LEDSet).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()){
+                    LEDValue = Integer.parseInt(task.getResult().getValue().toString());
+                    edit_LED.setText(task.getResult().getValue().toString());
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting data", task.getException());
+                }
+            }
+        });
+
+        // Get Fan Value First
+        database_LightMode.child(path_FanSet).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()){
+                    FanValue = Float.parseFloat(task.getResult().getValue().toString());
+                    edit_Fan.setText(task.getResult().getValue().toString());
                 }
                 else {
                     Log.e(TAG, "msg: Error getting data", task.getException());
@@ -291,6 +340,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Set the Listener for checking Now Humi
         database_LightMode.child(path_Humi).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -307,6 +357,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG,"msg: Get wrong humi data.");
+            }
+        });
+
+        // Set the Listener for get Light value
+        database_LightMode.child(path_LEDSet).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(afterInti){
+                    LEDValue = dataSnapshot.getValue(Integer.class);
+                    edit_LED.setText(String.valueOf(LEDValue));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Get wrong LED value data.");
+            }
+        });
+
+        // Set the Listener for get Fan value
+        database_LightMode.child(path_FanSet).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(afterInti){
+                    FanValue = dataSnapshot.getValue(Float.class);
+                    edit_Fan.setText(String.valueOf(FanValue));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Get wrong Fan value data.");
             }
         });
     }
@@ -380,6 +462,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // set the button onClick
+    void init_Button(){
+        button_LED.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String st = edit_LED.getText().toString();
+                if(st.equals("")){
+                    Toast.makeText(MainActivity.this,"Please in put a number.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(afterInti){
+                        database_LightMode.child(path_LEDSet).setValue(Integer.parseInt(st));
+                        Log.d(TAG,"msg: You set the Light value is : " + st);
+                    }
+                }
+            }
+        });
+
+        button_Fan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String st = edit_Fan.getText().toString();
+                if(st.equals("")){
+                    Toast.makeText(MainActivity.this,"Please in put a number.", Toast.LENGTH_SHORT).show();
+                } else{
+                    if(afterInti){
+                        database_LightMode.child(path_FanSet).setValue(Float.parseFloat(st));
+                        Log.d(TAG,"msg: You set the Fan value is : " + st);
+                    }
+                }
+            }
+        });
+    }
+
     // set the Light Mode Text
     void setLightModeText(int number) {
         switch (number) {
@@ -421,5 +536,4 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }

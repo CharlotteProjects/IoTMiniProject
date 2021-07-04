@@ -2,6 +2,7 @@
     <string name="app_name">IoTMiniProject</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
+    <string name="ok">OK</string>
     <string name="text_ChooseMode">Set the Light Mode :</string>
     <string name="text_LightMode">Light Mode :</string>
     <string name="text_YourLightMode">Auto Mode</string>
