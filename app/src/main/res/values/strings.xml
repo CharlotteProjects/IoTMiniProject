@@ -3,6 +3,8 @@
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="ok">OK</string>
+    <string name="open">OPENING</string>
+    <string name="close">CLOSE</string>
     <string name="text_ChooseMode">Set the Light Mode :</string>
     <string name="text_LightMode">Light Mode :</string>
     <string name="text_YourLightMode">Auto Mode</string>
@@ -15,6 +17,8 @@
     <string name="text_ChooseModeFan">Set the Fan Mode :</string>
     <string name="text_LightState_text">Light is :</string>
     <string name="text_FanState_text">Fan is :</string>
+    <string name="text_FireState_text">Stove is :</string>
+    <string name="text_DoorState_text">Door is :</string>
 
     <string-array name="drop_down_Light">
         <item>"Auto Mode"</item>

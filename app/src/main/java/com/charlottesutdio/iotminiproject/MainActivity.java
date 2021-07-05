@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private final String path_Humi = "NowHumi";
     private final String path_LEDSet = "LightActiviteValue";
     private final String path_FanSet = "FanActiviteValue";
+    private final String path_Fire = "Fire";
+    private final String path_Door = "Infrared";
 
     private boolean afterInti = false;
 
@@ -55,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView text_LEDOn;
     private TextView text_FanOn;
+    private TextView text_FireOn;
+    private TextView text_DoorOn;
     private TextView text_LightMode;
     private TextView text_FanMode;
     private TextView text_NowTemp;
@@ -62,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView image_LEDOn;
     private ImageView image_FanOn;
+    private ImageView image_FireOn;
+    private ImageView image_DoorOn;
 
     private EditText edit_LED;
     private EditText edit_Fan;
@@ -79,8 +87,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //region UI Set
+
         text_LEDOn = (TextView) findViewById(R.id.text_LightStateText);
         text_FanOn = (TextView) findViewById(R.id.text_FanStateText);
+        text_FireOn = (TextView) findViewById(R.id.text_FireStateText);
+        text_DoorOn = (TextView) findViewById(R.id.text_DoorStateText);
         text_LightMode = (TextView) findViewById(R.id.text_YourLightMode);
         text_FanMode = (TextView) findViewById(R.id.text_YourFanMode);
         text_NowTemp = (TextView) findViewById(R.id.text_DHTTemp);
@@ -88,12 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
         image_LEDOn = (ImageView) findViewById(R.id.image_LightState);
         image_FanOn = (ImageView) findViewById(R.id.image_FanState);
+        image_FireOn = (ImageView) findViewById(R.id.image_FireState);
+        image_DoorOn = (ImageView) findViewById(R.id.image_DoorState);
 
         edit_LED = (EditText) findViewById(R.id.edit_Light);
         edit_Fan = (EditText) findViewById(R.id.edit_Fan);
 
         button_LED = (Button) findViewById(R.id.button_Light);
         button_Fan = (Button) findViewById(R.id.button_Fan);
+
+        //endregion
 
         init_Firebase();
 
@@ -107,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database_LightMode = database.getReference(path_Main_Manager);
 
-        // Get Light On First
+        //region Get one Time in Start App
+
+        // Get Light On / Off First
         database_LightMode.child(path_LEDOn).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -128,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Get Fan OFF First
+        // Get Fan On / Off First
         database_LightMode.child(path_FanOn).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -145,6 +163,48 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     Log.e(TAG, "msg: Error getting Fan on data", task.getException());
+                }
+            }
+        });
+
+        // Get Fire On / Off First
+        database_LightMode.child(path_Fire).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(Boolean.parseBoolean(task.getResult().getValue().toString())){
+                        text_FireOn.setText(R.string.on);
+                        text_FireOn.setTextColor(Color.RED);
+                        image_FireOn.setImageResource(R.drawable.fire_on);
+                    } else{
+                        text_FireOn.setText(R.string.off);
+                        text_FireOn.setTextColor(Color.GREEN);
+                        image_FireOn.setImageResource(R.drawable.fire_off);
+                    }
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting Fire on data", task.getException());
+                }
+            }
+        });
+
+        // Get Door On / Off First
+        database_LightMode.child(path_Door).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(Boolean.parseBoolean(task.getResult().getValue().toString())){
+                        text_DoorOn.setText(R.string.close);
+                        text_DoorOn.setTextColor(Color.GREEN);
+                        image_DoorOn.setImageResource(R.drawable.door_off);
+                    } else{
+                        text_DoorOn.setText(R.string.open);
+                        text_DoorOn.setTextColor(Color.RED);
+                        image_DoorOn.setImageResource(R.drawable.door_on);
+                    }
+                }
+                else {
+                    Log.e(TAG, "msg: Error getting Fire on data", task.getException());
                 }
             }
         });
@@ -209,6 +269,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //endregion
+
+        //region Setting When Get data change
+
         // Set the Listener for checking Light ON / OFF
         database_LightMode.child(path_LEDOn).addValueEventListener(new ValueEventListener() {
             @Override
@@ -231,6 +295,69 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the Listener for checking Fan ON / OFF
         database_LightMode.child(path_FanOn).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    text_FanOn.setText(R.string.on);
+                    text_FanOn.setTextColor(Color.GREEN);
+                    image_FanOn.setImageResource(R.drawable.fan_on);
+                } else{
+                    text_FanOn.setText(R.string.off);
+                    text_FanOn.setTextColor(Color.RED);
+                    image_FanOn.setImageResource(R.drawable.fan_off);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Fan On Setting get wrong data.");
+            }
+        });
+
+        // Set the Listener for checking Fire ON / OFF
+        database_LightMode.child(path_Fire).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    text_FireOn.setText(R.string.on);
+                    text_FireOn.setTextColor(Color.RED);
+                    image_FireOn.setImageResource(R.drawable.fire_on);
+                } else{
+                    text_FireOn.setText(R.string.off);
+                    text_FireOn.setTextColor(Color.GREEN);
+                    image_FireOn.setImageResource(R.drawable.fire_off);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Fire On Setting get wrong data.");
+            }
+        });
+
+        // Set the Listener for checking Door ON / OFF
+        database_LightMode.child(path_Door).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(Boolean.class)) {
+                    text_DoorOn.setText(R.string.close);
+                    text_DoorOn.setTextColor(Color.GREEN);
+                    image_DoorOn.setImageResource(R.drawable.door_off);
+                } else{
+                    text_DoorOn.setText(R.string.open);
+                    text_DoorOn.setTextColor(Color.RED);
+                    image_DoorOn.setImageResource(R.drawable.door_on);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG,"msg: Door On Setting get wrong data.");
+            }
+        });
+
+        // Set the Listener for checking Door ON / OFF
+        database_LightMode.child(path_Door).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue(Boolean.class)) {
@@ -391,6 +518,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG,"msg: Get wrong Fan value data.");
             }
         });
+
+        //endregion
     }
 
     // init the Light Mode Spinner
